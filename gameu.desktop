@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=RPG Game
+Comment=2D Pixel RPG Game
+Exec=bash start_game.sh
+Icon=applications-games
+Terminal=true
+Path=
+StartupNotify=true
+Categories=Game;
+
