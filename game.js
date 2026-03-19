@@ -1,4 +1,25 @@
-// 캔버스 설정
+// 배경음악 준비
+const bgm = new Audio("music.mp3"); // MP3 파일명 정확히
+bgm.loop = true;      // 무한 반복
+bgm.volume = 0.5;     // 볼륨 설정 (0~1)
+
+let musicStarted = false;
+
+// 오른쪽 화살표 키 이벤트
+document.addEventListener("keydown", function(e) {
+    if (e.code === "ArrowRight" && !musicStarted) {
+        bgm.play().catch(error => console.log("재생 실패:", error));
+        musicStarted = true;
+    }
+});
+
+// 화면 클릭 이벤트
+document.addEventListener("click", function() {
+    if (!musicStarted) {
+        bgm.play().catch(error => console.log("재생 실패:", error));
+        musicStarted = true;
+    }
+});// 캔버스 설정
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
