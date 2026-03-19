@@ -1,25 +1,37 @@
 // 배경음악 준비
-const bgm = new Audio("music.mp3"); // MP3 파일명 정확히
+const bgm = new Audio("music.wav");
 bgm.loop = true;      // 무한 반복
 bgm.volume = 0.5;     // 볼륨 설정 (0~1)
 
 let musicStarted = false;
 
-// 오른쪽 화살표 키 이벤트
-document.addEventListener("keydown", function(e) {
-    if (e.code === "ArrowRight" && !musicStarted) {
-        bgm.play().catch(error => console.log("재생 실패:", error));
-        musicStarted = true;
-    }
-});
+function startMusic() {
+    // 브라우저 정책 때문에 autoplay이 막힐 수 있어 실패해도 앱은 계속 동작해야 함
+    if (musicStarted) return;
+    bgm.currentTime = 0; // 재시작 시 처음부터
+    bgm.play()
+        .then(() => {
+            musicStarted = true;
+        })
+        .catch(error => {
+            console.log("재생 실패(사용자 제스처 필요할 수 있음):", error);
+        });
+}
 
-// 화면 클릭 이벤트
-document.addEventListener("click", function() {
-    if (!musicStarted) {
-        bgm.play().catch(error => console.log("재생 실패:", error));
-        musicStarted = true;
-    }
-});// 캔버스 설정
+function stopMusic() {
+    bgm.pause();
+    bgm.currentTime = 0;
+    musicStarted = false;
+}
+
+// 페이지 열자마자 재생 시도
+startMusic();
+
+// 자동재생이 차단된 경우를 대비해, 첫 클릭/키 입력에서 재생 시작
+document.addEventListener("click", () => startMusic());
+document.addEventListener("keydown", () => startMusic());
+
+// 캔버스 설정
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -696,6 +708,7 @@ function checkExit() {
         // 열쇠 없이 출구 시도 -> 죽음
         isDead = true;
         deathAnimation = true;
+        stopMusic(); // 죽으면 배경음악 정지
         deathPhase = 1; // 페이드인 시작
         fadeAlpha = 0;
         fadeDirection = 1; // fade out 시작
@@ -2427,6 +2440,9 @@ function resetGame() {
     
     // 게임패드 버튼 상태 초기화
     lastGamepadButtons = {};
+
+    // 리셋(재시작) 시 음악 다시 재생
+    startMusic();
 }
 
 // 게임 루프
